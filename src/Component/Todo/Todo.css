@@ -1,0 +1,17 @@
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: cadetblue;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.cb {
+  position: relative;
+}
+.btn {
+  position: absolute;
+  bottom: 1%;
+  right: 1%;
+}
