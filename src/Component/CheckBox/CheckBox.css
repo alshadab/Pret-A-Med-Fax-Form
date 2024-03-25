@@ -1,0 +1,14 @@
+.checkbox {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content:space-between;
+    
+    
+    
+     /* Stack checkboxes vertically */
+}
+
+.checkbox input[type="checkbox"] {
+    width: 17px;
+    align-items: center;
+}
