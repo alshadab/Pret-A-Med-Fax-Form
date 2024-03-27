@@ -8,11 +8,50 @@ const From = ({ FillForm, formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    const newValue = type === "checkbox" ? checked : value;
+    // If the input type is a checkbox or radio button, handle its checked state or value
+    const newValue =
+      type === "checkbox"
+        ? checked
+        : type === "radio"
+        ? value === "true"
+        : value;
 
+    // Update formData state
     setFormData({ ...formData, [name]: newValue });
   };
 
+  const handleReset = (e) => {
+    e.preventDefault();
+    setFormData({
+      Name: "",
+      Address: "",
+      City: "",
+      Postal_Code: "",
+      Phone_Number: "",
+      Organization_Name: "",
+      Contact_Person: "",
+      Type_Clinic: false,
+      Type_Practitioner: false,
+      Type_Service_Bureau: false,
+      Type_Hospital: false,
+      Type_Vender: false,
+      New_Data_Centre_Name: "",
+      New_Data_Centre_Contact: "",
+      Existing_Data_Centre_Name: "",
+      Existing_Data_Centre_Number: "",
+      Service_Bureau_Name: "",
+      Service_Bureau_Number: "",
+      Computer_Make_Model: "",
+      Modem_Make_Model: "",
+      Modem_Speed: "",
+      Modem: false,
+      Software_Name: "",
+      Vender_Name: "",
+      Supplier: "",
+      Signature_Date: "",
+      MSP_Payee_Number: "",
+    });
+  };
   return (
     <div className="contact-form-container">
       <h5>Mailing Address</h5>
@@ -128,7 +167,7 @@ const From = ({ FillForm, formData, setFormData }) => {
                 type="checkbox"
                 id="checkbox1"
                 name="Type_Hospital"
-                value={formData.Type_Hospital}
+                checked={formData.Type_Hospital}
                 onChange={handleChange}
               />
               <label htmlFor="checkbox1">HOSPITAL</label>
@@ -138,7 +177,7 @@ const From = ({ FillForm, formData, setFormData }) => {
                 type="checkbox"
                 id="checkbox2"
                 name="Type_Practitioner"
-                value={formData.Type_Practitioner}
+                checked={formData.Type_Practitioner}
                 onChange={handleChange}
               />
               <label htmlFor="checkbox2">PRACTITONER</label>
@@ -149,7 +188,7 @@ const From = ({ FillForm, formData, setFormData }) => {
                 type="checkbox"
                 id="checkbox3"
                 name="Type_Service_Bureau"
-                value={formData.Type_Service_Bureau}
+                checked={formData.Type_Service_Bureau}
                 onChange={handleChange}
               />
               <label htmlFor="checkbox3">SERVICE BUREAU</label>
@@ -160,7 +199,7 @@ const From = ({ FillForm, formData, setFormData }) => {
                 type="checkbox"
                 id="checkbox4"
                 name="Type_Vender"
-                value={formData.Type_Vender}
+                checked={formData.Type_Vender}
                 onChange={handleChange}
               />
               <label htmlFor="checkbox4">VENDOOR</label>
@@ -171,7 +210,7 @@ const From = ({ FillForm, formData, setFormData }) => {
                 type="checkbox"
                 id="checkbox5"
                 name="Type_Clinic"
-                value={formData.Type_Clinic}
+                checked={formData.Type_Clinic}
                 onChange={handleChange}
               />
               <label htmlFor="checkbox5">CLINIC</label>
@@ -303,7 +342,7 @@ const From = ({ FillForm, formData, setFormData }) => {
             style={{ width: "100%" }}
           />
         </label>
-        {/* new */}
+        {/* new added */}
         <div className="system">
           <label>
             MAKE/MODEL OF MODEM:
@@ -322,16 +361,26 @@ const From = ({ FillForm, formData, setFormData }) => {
             <div style={{ display: "flex" }}>
               <input
                 type="radio"
+                id="radio1"
+                name="Modem"
+                value="true"
+                checked={formData.Modem === true}
+                onChange={handleChange}
                 style={{ width: "15px", marginRight: "2px" }}
               />
-              <label>INT</label>
+              <label htmlFor="radio1">INT</label>
             </div>
             <div style={{ display: "flex" }}>
               <input
                 type="radio"
+                id="radio2"
+                name="Modem"
+                value="false"
+                checked={formData.Modem === false}
+                onChange={handleChange}
                 style={{ width: "15px", marginRight: "2px" }}
               />
-              <label>EXT</label>
+              <label htmlFor="radio2">EXT</label>
             </div>
           </div>
 
@@ -427,6 +476,14 @@ const From = ({ FillForm, formData, setFormData }) => {
         </div>
         <Button onClick={FillForm} variant="contained" color="success">
           Submit
+        </Button>
+        <Button
+          style={{ marginTop: "15px" }}
+          onClick={handleReset}
+          variant="contained"
+          color="error"
+        >
+          Reset
         </Button>
       </form>
     </div>
