@@ -63,6 +63,7 @@ const Check = () => {
     if (formPdfBytes) {
       const pdfDoc = await PDFDocument.load(formPdfBytes);
       const form = pdfDoc.getForm();
+      console.log(form);
 
       // Update form fields based on the state
       try {
@@ -163,6 +164,7 @@ const Check = () => {
         modemSpeedField.setText(formData.Modem_Speed);
 
         const Modem = form.getCheckBox("Modem");
+        console.log(Modem);
         if (formData.Modem) {
           Modem.check();
         } else {
@@ -277,8 +279,8 @@ const Check = () => {
                     ""
                   )
                 )}`}
-                width="600"
-                height="400"
+                width="800"
+                height="800"
               ></iframe>
             </div>
           )}

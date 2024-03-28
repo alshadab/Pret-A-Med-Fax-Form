@@ -8,7 +8,6 @@ const From = ({ FillForm, formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // If the input type is a checkbox or radio button, handle its checked state or value
     const newValue =
       type === "checkbox"
         ? checked
@@ -16,9 +15,25 @@ const From = ({ FillForm, formData, setFormData }) => {
         ? value === "true"
         : value;
 
-    // Update formData state
     setFormData({ ...formData, [name]: newValue });
   };
+
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+
+  //   const newValue =
+  //     type === "checkbox" ? checked : type === "radio" ? e.target.value : value;
+
+  //   setFormData({ ...formData, [name]: newValue });
+  //   console.log(formData.Modem);
+  // };
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   // Update formData state
+  //   setFormData({ ...formData, [name]: value });
+  // };
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -383,6 +398,60 @@ const From = ({ FillForm, formData, setFormData }) => {
               <label htmlFor="radio2">EXT</label>
             </div>
           </div>
+          {/* 
+          <div>
+            <div style={{ display: "flex" }}>
+              <input
+                type="radio"
+                id="radio1"
+                name="Modem"
+                value="INT"
+                checked={formData.Modem === "INT"}
+                onChange={handleChange}
+                style={{ width: "15px", marginRight: "2px" }}
+              />
+              <label htmlFor="radio1">INT</label>
+            </div>
+            <div style={{ display: "flex" }}>
+              <input
+                type="radio"
+                id="radio2"
+                name="Modem"
+                value="EXT"
+                checked={formData.Modem === "EXT"}
+                onChange={handleChange}
+                style={{ width: "15px", marginRight: "2px" }}
+              />
+              <label htmlFor="radio2">EXT</label>
+            </div>
+          </div> */}
+
+          {/* <div>
+            <div style={{ display: "flex" }}>
+              <input
+                type="radio"
+                id="radio1"
+                name="Modem"
+                value="INT"
+                checked={formData.Modem === "INT"}
+                onChange={handleChange}
+                style={{ width: "15px", marginRight: "2px" }}
+              />
+              <label htmlFor="radio1">INT</label>
+            </div>
+            <div style={{ display: "flex" }}>
+              <input
+                type="radio"
+                id="radio2"
+                name="Modem"
+                value="EXT"
+                checked={formData.Modem === "EXT"}
+                onChange={handleChange}
+                style={{ width: "15px", marginRight: "2px" }}
+              />
+              <label htmlFor="radio2">EXT</label>
+            </div>
+          </div> */}
 
           <label>
             SPEED:
