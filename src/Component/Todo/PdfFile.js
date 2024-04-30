@@ -6,30 +6,30 @@
 //   const [mergedPdfFile, setMergedPdfFile] = useState(null);
 //   const [numPages, setNumPages] = useState(null);
 
-//   const handleFileChange = async (event) => {
-//     const files = event.target.files;
-//     const buffers = await Promise.all(
-//       [...files].map((file) => file.arrayBuffer())
-//     );
+// const handleFileChange = async (event) => {
+//   const files = event.target.files;
+//   const buffers = await Promise.all(
+//     [...files].map((file) => file.arrayBuffer())
+//   );
 
-//     const mergedPdf = await PDFDocument.create();
-//     for (const pdfBuffer of buffers) {
-//       const pdf = await PDFDocument.load(pdfBuffer);
-//       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-//       copiedPages.forEach((page) => mergedPdf.addPage(page));
-//     }
+//   const mergedPdf = await PDFDocument.create();
+//   for (const pdfBuffer of buffers) {
+//     const pdf = await PDFDocument.load(pdfBuffer);
+//     const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+//     copiedPages.forEach((page) => mergedPdf.addPage(page));
+//   }
 
-//     const mergedPdfBuffer = await mergedPdf.save();
-//     const blob = new Blob([mergedPdfBuffer], { type: "application/pdf" });
+//   const mergedPdfBuffer = await mergedPdf.save();
+//   const blob = new Blob([mergedPdfBuffer], { type: "application/pdf" });
 
-//     // Create a new file object
-//     const mergedPdfFile = new File([blob], "merged.pdf", {
-//       type: "application/pdf",
-//     });
+//   // Create a new file object
+//   const mergedPdfFile = new File([blob], "merged.pdf", {
+//     type: "application/pdf",
+//   });
 
-//     // Set the merged PDF file in state
-//     setMergedPdfFile(mergedPdfFile);
-//   };
+//   // Set the merged PDF file in state
+//   setMergedPdfFile(mergedPdfFile);
+// };
 
 //   return (
 //     <div>

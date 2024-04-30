@@ -8,11 +8,15 @@ import ViewPdf from "./Component/Todo/ViewPdf";
 import PDFTronViewer from "./Component/Todo/PdfIo";
 import PDfLib from "./Component/Todo/PDfLib";
 import Check from "./Component/Todo/Check";
+import Screen from "./Component/Screen";
+import PdfDocument from "./Component/PdfDocument";
 
 function App() {
   return (
     <div className="bo">
-      <Check />
+      <PdfDocument />
+      {/* <Screen /> */}
+      {/* <Check />  */}
       {/* <Todo /> */}
       {/* <PDF /> */}
       {/* <PDfLib /> */}

@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import "./From.css";
-import "./CheckBox/CheckBox.css";
 import { Button } from "@mui/material";
 
-const From = ({ FillForm, formData, setFormData }) => {
+const From = ({
+  FillForm,
+  formData,
+  setFormData,
+  divRef,
+  handleExportToPDF,
+}) => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -67,8 +72,16 @@ const From = ({ FillForm, formData, setFormData }) => {
       MSP_Payee_Number: "",
     });
   };
+
+  const Print = () => {
+    let printContents = document.getElementById("printablediv").innerHTML;
+    let originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  };
   return (
-    <div className="contact-form-container">
+    <div id="printablediv" className="contact-form-container">
       <h5>Mailing Address</h5>
       <form onSubmit={FillForm}>
         <label>
@@ -398,8 +411,8 @@ const From = ({ FillForm, formData, setFormData }) => {
               <label htmlFor="radio2">EXT</label>
             </div>
           </div>
-          {/* 
-          <div>
+
+          {/* <div>
             <div style={{ display: "flex" }}>
               <input
                 type="radio"

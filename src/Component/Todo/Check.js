@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { PDFDocument } from "pdf-lib";
+import React, { useRef, useState } from "react";
+import { PDFDocument, rgb } from "pdf-lib";
 import From from "../From";
+import file from "../teleplan.pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 
 const Check = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +27,7 @@ const Check = () => {
     Computer_Make_Model: "",
     Modem_Make_Model: "",
     Modem_Speed: "",
-    Modem: false,
+    Modem: "",
     Software_Name: "",
     Vender_Name: "",
     Supplier: "",
@@ -35,18 +37,38 @@ const Check = () => {
   const [formPdfBytes, setFormPdfBytes] = useState(null);
   const [base64Data, setBase64Data] = useState("");
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  // Client-side code
 
-    reader.onload = function (e) {
-      setFormPdfBytes(e.target.result);
-    };
-
-    if (file) {
-      reader.readAsArrayBuffer(file);
-    }
+  const handleFileChange = async () => {
+    fetch(file)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          console.log(reader.result);
+          setFormPdfBytes(reader.result);
+        };
+      });
   };
+  // const handleFileFetch = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://www2.gov.bc.ca/assets/gov/health/forms/2820fil.pdf"
+  //     ); // Replace 'your-server-url' with the URL of your server and 'your-file.pdf' with the name of the file
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch file");
+  //     }
+  //     const blob = await response.blob();
+  //     const reader = new FileReader();
+  //     reader.onload = function (e) {
+  //       setFormPdfBytes(e.target.result);
+  //     };
+  //     reader.readAsArrayBuffer(blob);
+  //   } catch (error) {
+  //     console.error("Error fetching file:", error);
+  //   }
+  // };
 
   const downloadPDF = (pdfBytes, filename) => {
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
@@ -222,9 +244,147 @@ const Check = () => {
     }
   };
 
+  //on ss
+
+  const [pageDetails, setPageDetails] = useState(null);
+  const documentRef = useRef(null);
+  const [signatureURL, setSignatureURL] = useState(null);
+  const [position, setPosition] = useState(null);
+  const [pdf, setPdf] = useState(null);
+  const [pageNum, setPageNum] = useState(0);
+
+  const styles = {
+    container: {
+      maxWidth: 900,
+      margin: "0 auto",
+    },
+    sigBlock: {
+      display: "inline-block",
+      border: "1px solid #000",
+    },
+    documentBlock: {
+      maxWidth: 800,
+      margin: "20px auto",
+      marginTop: 8,
+      border: "1px solid #999",
+    },
+    controls: {
+      maxWidth: 800,
+      margin: "0 auto",
+      marginTop: 8,
+    },
+  };
+
+  function blobToURL(blob) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = function () {
+        const base64data = reader.result;
+        resolve(base64data);
+      };
+    });
+  }
+
+  const onSs = async () => {
+    const { originalHeight, originalWidth } = pageDetails;
+    const scale = originalWidth / documentRef.current.clientWidth;
+
+    const y =
+      documentRef.current.clientHeight -
+      (position.y - position.offsetY + 64 - documentRef.current.offsetTop);
+    const x =
+      position.x - 160 - position.offsetX - documentRef.current.offsetLeft;
+
+    // new XY in relation to actual document size
+    const newY = (y * originalHeight) / documentRef.current.clientHeight;
+    const newX = (x * originalWidth) / documentRef.current.clientWidth;
+
+    const pdfDoc = await PDFDocument.load(pdf);
+
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[pageNum];
+
+    const pngImage = await pdfDoc.embedPng(signatureURL);
+    const pngDims = pngImage.scale(scale * 0.3);
+
+    firstPage.drawImage(pngImage, {
+      x: newX,
+      y: newY,
+      width: pngDims.width,
+      height: pngDims.height,
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([new Uint8Array(pdfBytes)]);
+
+    const URL = await blobToURL(blob);
+    setPdf(URL);
+    setPosition(null);
+    setSignatureURL(null);
+  };
+
+  const divRef = useRef(null);
+
+  const handleExportToPDF = async () => {
+    // Get dimensions of the div
+    const div = divRef.current;
+    const { offsetWidth, offsetHeight } = div;
+
+    // Create a new PDF document
+    const pdfDoc = await PDFDocument.create();
+
+    // Add a new page to the PDF document
+    const page = pdfDoc.addPage([offsetWidth, offsetHeight]);
+
+    // Draw a rectangle on the page
+    page.drawRectangle({
+      x: 50,
+      y: offsetHeight - 100,
+      width: 200,
+      height: 50,
+      color: rgb(0.2, 0.5, 0.7),
+    });
+
+    // Add some text to the page
+    page.drawText("Hello, this is a PDF!", {
+      x: 100,
+      y: offsetHeight - 80,
+      size: 20,
+      color: rgb(1, 0, 0),
+    });
+
+    // Get the PDF bytes
+    const pdfBytes = await pdfDoc.save();
+
+    // Create a blob from the PDF bytes
+    const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+
+    // Create a URL for the blob
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new tab
+    window.open(pdfUrl, "_blank");
+  };
+
+  const Print = () => {
+    let printContents = document.getElementById("printablediv").innerHTML;
+    let originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  };
+
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
+
   return (
     <div>
-      <input type="file" accept=".pdf" onChange={handleFileChange} />
+      {/* <input type="file" accept=".pdf" onChange={handleFileChange} /> */}
       {/* <div>
         <label>
           Name:
@@ -258,7 +418,8 @@ const Check = () => {
 
       {/* {formPdfBytes &&  */}
 
-      <button onClick={getFields}>Update and Download PDF</button>
+      <button onClick={getFields}>Get Fields</button>
+      <button onClick={handleFileChange}>Open</button>
       <div>Base64 PDF Data: {base64Data}</div>
       <div
         style={{
@@ -266,6 +427,7 @@ const Check = () => {
           justifyContent: "center",
         }}
       >
+        {/* <iframe src={file} width="100%" height="600px" /> */}
         <div>
           {formPdfBytes && (
             <div>
@@ -273,12 +435,7 @@ const Check = () => {
               <iframe
                 id="pdfIframe"
                 title="PDF Preview"
-                src={`data:application/pdf;base64,${btoa(
-                  new Uint8Array(formPdfBytes).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ""
-                  )
-                )}`}
+                src={formPdfBytes}
                 width="800"
                 height="800"
               ></iframe>
@@ -286,14 +443,38 @@ const Check = () => {
           )}
 
           {base64Data && (
-            <div style={{ marginTop: "50px" }}>
+            <div
+              ref={divRef}
+              style={{
+                width: "500px",
+                height: "700px",
+                border: "1px solid black",
+              }}
+            >
               <h2>Updated</h2>
-              <iframe
+              <Document
+                file={{ data: base64Data }}
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
+                <Page pageNumber={pageNumber} />
+              </Document>
+              <p>
+                Page {pageNumber} of {numPages}
+              </p>
+              {/* <iframe
+                id="printablediv"
                 src={base64Data}
                 width="600"
                 height="400"
                 title="Preview"
-              ></iframe>
+              ></iframe> */}
+              <button onClick={Print}>Take SS</button>
+            </div>
+          )}
+
+          {pdf && (
+            <div>
+              <iframe src={pdf} width="600" height="400" title="PDF"></iframe>
             </div>
           )}
         </div>
@@ -302,6 +483,8 @@ const Check = () => {
             FillForm={FillForm}
             formData={formData}
             setFormData={setFormData}
+            handleExportToPDF={handleExportToPDF}
+            divRef={divRef}
           />
         )}
       </div>

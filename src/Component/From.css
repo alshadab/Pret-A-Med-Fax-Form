@@ -110,3 +110,13 @@
   grid-template-columns: 1fr auto 1fr; /* First and third div take equal width, middle div adjusts automatically */
   gap: 10px;
 }
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.check label {
+  margin-left: 5px;
+}
